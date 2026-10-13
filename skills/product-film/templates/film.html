@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Film</title>
+<!--
+  A one-clock film: open it in a browser to watch it play, or render it frame by frame with
+  scripts/render.js. Every motion is an animation with a delay on the same clock, created once at load,
+  so the renderer can pause them all and seek the whole page to any frame.
+
+  Replace the brand tokens, the copy and the scenes. Keep the rules (references/one-clock.md):
+  no requestAnimationFrame loops, no Date.now(), no unseeded randomness, no timers that change state.
+
+    0.0 – 2.4   the line, word by word
+    2.4 – 5.9   the product: a card rises, a message types, sends, a reply lands
+    5.9 – 9.0   end card: mark, name, tagline, the bold line (?line=…), URL
+-->
+<style>
+:root{
+  --bg:#0B0F19; --ink:#F4F6FB; --muted:#8A93A6; --accent:#4F7DF3; --card:#FFFFFF; --card-ink:#111827;
+  --f-display:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:960px;height:540px;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--f-display)}
+.layer{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.line{font-size:52px;font-weight:800;letter-spacing:-.02em;margin:0}
+.sub{font-size:22px;color:var(--muted);margin-top:14px}
+.app{width:520px;border-radius:18px;background:var(--card);color:var(--card-ink);padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.45);text-align:left;opacity:0}
+.bubble{display:inline-block;max-width:80%;padding:10px 14px;border-radius:14px;font-size:16px;line-height:1.35;opacity:0}
+.bubble.them{background:#EEF2F8}
+.bubble.me{background:var(--accent);color:#fff;float:right;clear:both;margin-top:10px}
+.composer{display:flex;align-items:center;gap:10px;margin-top:64px;border:1px solid #E3E7EF;border-radius:999px;padding:10px 10px 10px 16px;font-size:16px;clear:both}
+.composer .typed{flex:1;min-height:20px}
+.send{width:34px;height:34px;border-radius:50%;background:var(--accent)}
+.mark{width:64px;height:64px;border-radius:16px;border:5px solid var(--ink);opacity:0}
+.name{font-size:56px;font-weight:800;letter-spacing:-.02em;margin-top:18px}
+.tag{font-size:26px;margin-top:10px}
+.tag b{color:var(--accent)}
+.bold{font-size:30px;font-weight:800;margin-top:26px;padding:8px 20px 10px;border-radius:12px;background:var(--accent);opacity:0}
+.url{font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:22px;opacity:0}
+</style>
+</head>
+<body>
+
+<div class="layer" id="s1">
+  <p class="line" id="line"></p>
+  <p class="sub" id="sub" style="opacity:0">One sentence about what it does for you.</p>
+</div>
+
+<div class="layer" id="s2">
+  <div class="app" id="app">
+    <div class="bubble them" id="hello">Good morning. What should we get done today?</div>
+    <div class="bubble me" id="mine"></div>
+    <div class="composer"><span class="typed" id="typed"></span><span class="send" id="send"></span></div>
+  </div>
+</div>
+
+<div class="layer" id="s3" style="opacity:0">
+  <div class="mark" id="mark"></div>
+  <div class="name" id="name" style="opacity:0">Acme</div>
+  <div class="tag" id="tag" style="opacity:0">The <b>one tool</b> that does the thing</div>
+  <div class="bold" id="bold"></div>
+  <div class="url" id="url">acme.example</div>
+</div>
+
+<script>
+// ── the clock: every scene hangs off these cue times ──
+const REVEAL = 2.4;                          // the product card rises
+const TYPE_TEXT = 'Line up today’s work';
+const TYPE_AT = REVEAL + 0.9, TYPE_STEP = 0.04;
+const SEND = TYPE_AT + TYPE_TEXT.length * TYPE_STEP + 0.2;
+const END = SEND + 1.3;                      // end card
+window.DURATION = END + 3.1;
+window.TIMELINE = { REVEAL, TYPE_AT, SEND, END };   // render.js `timeline` writes this out for splice / music cues
+
+// ── the kit: everything is element.animate() with a delay, fill forwards ──
+const EASE = 'cubic-bezier(.2,.7,.2,1)';
+const A = (el, frames, t, d, o = {}) => el.animate(frames, {
+  delay: t * 1000, duration: Math.max(1, d * 1000), fill: o.fill || 'forwards', easing: o.ease || EASE,
+});
+const on = (el, t, d = 0.3) => A(el, [{ opacity: 0 }, { opacity: 1 }], t, d);
+const off = (el, t, d = 0.3) => A(el, [{ opacity: 1 }, { opacity: 0 }], t, d);
+const rise = (el, t, d = 0.6) => A(el, [{ opacity: 0, transform: 'translateY(.4em)', filter: 'blur(6px)' },
+                                        { opacity: 1, transform: 'none', filter: 'blur(0)' }], t, d);
+function words(el, text, t, step = 0.08) {               // words rise in one at a time
+  text.split(' ').forEach((w, i, ws) => {
+    const s = document.createElement('span');
+    s.textContent = w; s.style.display = 'inline-block'; s.style.opacity = 0;
+    el.append(s, i < ws.length - 1 ? ' ' : '');
+    rise(s, t + i * step);
+  });
+}
+function type(el, text, t, step) {                       // one span per character, each cut in on its frame
+  [...text].forEach((ch, i) => {
+    const s = document.createElement('span');
+    s.textContent = ch; s.style.opacity = 0; el.append(s);
+    A(s, [{ opacity: 0 }, { opacity: 1 }], t + i * step, 0.001);
+  });
+}
+
+// scene 1: the line
+words(document.getElementById('line'), 'Your work, handled.', 0.2);
+on(document.getElementById('sub'), 1.0, 0.5);
+off(document.getElementById('s1'), REVEAL - 0.3, 0.3);
+
+// scene 2: the product
+const app = document.getElementById('app');
+A(app, [{ opacity: 0, transform: 'translateY(40px) scale(.96)' }, { opacity: 1, transform: 'none' }], REVEAL, 0.6);
+on(document.getElementById('hello'), REVEAL + 0.4);
+type(document.getElementById('typed'), TYPE_TEXT, TYPE_AT, TYPE_STEP);
+A(document.getElementById('send'), [{ transform: 'scale(1)' }, { transform: 'scale(.82)' }, { transform: 'scale(1)' }], SEND, 0.2);
+A(document.getElementById('typed'), [{ opacity: 1 }, { opacity: 0 }], SEND, 0.001);
+document.getElementById('mine').textContent = TYPE_TEXT;
+rise(document.getElementById('mine'), SEND + 0.05, 0.35);
+off(document.getElementById('s2'), END - 0.25, 0.3);
+
+// scene 3: the end card
+const bold = document.getElementById('bold');
+bold.textContent = new URLSearchParams(location.search).get('line') || 'Try it today.';
+on(document.getElementById('s3'), END, 0.01);
+A(document.getElementById('mark'), [{ opacity: 0, transform: 'scale(.6) rotate(-8deg)' }, { opacity: 1, transform: 'none' }], END + 0.1, 0.5);
+rise(document.getElementById('name'), END + 0.35);
+rise(document.getElementById('tag'), END + 0.75);
+rise(bold, END + 1.35);
+on(document.getElementById('url'), END + 1.9, 0.5);
+</script>
+</body>
+</html>

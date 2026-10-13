@@ -6,6 +6,7 @@ skills can use them.
 
 | Skill | What it does |
 |---|---|
+| [`product-film`](skills/product-film) | Makes short promo, teaser and launch films of a software product from its real UI: one HTML page on one clock, rendered frame-exact to 60 fps with headless Chrome. Splices in clips and captioned GIFs, lands a generated track's drop on a picture cue, masters to −14 LUFS. |
 | [`x-media-download`](skills/x-media-download) | Downloads the videos, GIFs and photos attached to public X (Twitter) posts: the best MP4, real `.gif`s on request, original-size photos, and a JSON record of where each file came from. No login, no API key, Python standard library only. |
 
 ## Install a skill

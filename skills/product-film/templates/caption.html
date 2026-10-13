@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Caption</title>
+<!--
+  A meme caption to lay over a clip: render it to a transparent PNG and pass it as a splice.py overlay.
+    node scripts/render.js templates/caption.html png caption.png --query "text=When the meeting%0Acould have been an email"
+  A newline (%0A in the query) is where the line breaks. Break it yourself: an automatic wrap can split a phrase.
+-->
+<style>
+html,body{margin:0;width:960px;height:540px;background:transparent;overflow:hidden}
+.scrim{position:absolute;left:0;right:0;top:0;height:190px;background:linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.38) 55%,rgba(0,0,0,0))}
+.cap{position:absolute;left:0;right:0;top:34px;padding:0 40px;text-align:center;color:#fff;white-space:pre-line;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1.05;
+  font-size:44px;text-shadow:0 2px 14px rgba(0,0,0,.55)}
+</style>
+</head>
+<body>
+<div class="scrim"></div>
+<div class="cap" id="cap"></div>
+<script>
+document.getElementById('cap').textContent = new URLSearchParams(location.search).get('text') || 'Your caption here';
+</script>
+</body>
+</html>

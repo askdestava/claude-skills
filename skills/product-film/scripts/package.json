@@ -1,0 +1,8 @@
+{
+  "name": "product-film-scripts",
+  "private": true,
+  "description": "render.js drives the system Chrome; nothing else needs installing from npm",
+  "dependencies": {
+    "puppeteer-core": "25.12.0"
+  }
+}
