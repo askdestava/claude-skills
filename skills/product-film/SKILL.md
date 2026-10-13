@@ -48,7 +48,7 @@ screenshot it. That buys three things a generated video can't:
 | Script | Does |
 |---|---|
 | `node scripts/render.js page.html stills 1.2,4.5` | Frames at those times → `stills/t_<s>.png` next to the page |
-| `node scripts/render.js page.html video out.mp4` | The whole film at 60 fps (needs `window.DURATION`); about 9–10 frames rendered per second on a laptop |
+| `node scripts/render.js page.html video out.mp4` | The whole film at 60 fps (needs `window.DURATION`); 5–10 frames rendered per second on a laptop, depending on the page |
 | `node scripts/render.js page.html timeline` | `window.TIMELINE` + `DURATION` → `timeline.json` |
 | `node scripts/render.js caption.html png cap.png --query "text=Line one%0Aline two"` | One transparent frame (captions, overlays) |
 | `python3 scripts/splice.py -o cut.mp4 clip.mp4::11.5:cap.png film.mp4:5.0` | Segments `path[:in[:out[:overlay]]]` joined frame-exact; writes `cut.timeline.json` (each segment's `at` and `in`) |

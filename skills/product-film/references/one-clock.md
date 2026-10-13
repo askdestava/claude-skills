@@ -57,5 +57,6 @@ live.
 ## Size and speed
 
 Author at 960×540 CSS pixels and render at `--scale 2` (the default) for 1920×1080. For vertical, size the page's
-`html,body` to 540×960 (the templates hardcode 960×540) and render with `--size 1080x1920`. Rendering runs at about 9–10 frames per second on a laptop (measured:
-522 frames in 53 s, 967 frames in 110 s), so render stills first and the full film when the stills are right.
+`html,body` to 540×960 (the templates hardcode 960×540) and render with `--size 1080x1920`. Rendering runs at 5–10 frames per second on a laptop, depending on the page (measured:
+522 frames in 53 s, 967 frames in 110 s, a 1080×1920 phone-UI film 1260 frames in about 4 minutes), so render stills
+first and the full film when the stills are right.
