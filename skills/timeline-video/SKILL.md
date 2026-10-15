@@ -64,6 +64,24 @@ centre, each stage farther than the last, which leading line stays where.
 - **Never ask the model for text, logos or brand marks.** It garbles them, and it paints badges on vehicles unless
   the negatives forbid it. Put the lines on afterwards in your own fonts, over the quiet wide.
 
+### Real, not rendered
+
+Two takes from the same model, in the same shape and at the same price: one read as real and the other as artificial.
+What separated them:
+
+- **Natural light.** Light the place the way it is really lit: golden hour, overcast daylight, a street lamp's own
+  colour. A single fluorescent box overhead, or one flat colour grade over everything, reads as CGI.
+- **A plausible, lived-in place.** Put the person somewhere they would really be, with the clutter of use: a mug,
+  tyre tracks, a sign post, wind in their hair. A spotless set in untouched snow reads as staged, and so does an
+  outfit too polished for the place.
+- **Keep the model's own sound when you can.** Audio made with the picture belongs to it: the voice is heard, and the
+  sound follows what happens in frame. A silent take with music and captions laid on afterwards reads like stock
+  footage.
+- **One specific human gesture.** Peeking over sunglasses, or an "uh-oh" out loud, beats a held neutral face.
+- **Change one thing per re-roll.** When a take is refused or comes back wrong, change the smallest thing that could
+  be the cause and look again. The artificial take changed the place, the sound and the framing at once to get past
+  a refusal. It lost what made the first take feel real, and there was no way to tell which change mattered.
+
 Shapes besides the zoom-out: the **push-in** (the punchline is a detail), the **follow** (a long walk compresses
 time), the **orbit** (the world changes around a still subject). Same six blocks; the camera rules change.
 
@@ -101,7 +119,8 @@ generation ids, timings and the `usage` block. Keep them together; the sidecar i
    escalates; no text, logos or extra people appeared.
 3. Listen: the trigger lands on its cue and the voice says the exact words.
 
-A failed beat is a re-roll (new seed) or a script fix, usually a vaguer window made specific.
+A failed beat is a re-roll (new seed) or a script fix, usually a vaguer window made specific. Change one thing at a
+time (see "Real, not rendered").
 
 ## When it fails
 
