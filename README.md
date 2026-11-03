@@ -6,6 +6,7 @@ skills can use them.
 
 | Skill | What it does |
 |---|---|
+| [`mac-supply-chain-audit`](skills/mac-supply-chain-audit) | Audits the Mac it runs on, read-only: who is talking out and to whom, what persists and who signed it, every installed npm package and lockfile against ~8,400 known-compromised versions, IDE and browser extensions, MCP servers and hooks, and the named campaigns (Shai-Hulud, ChainDrop, the trojanized Claude Code Cursor extension, …) one by one. One Markdown report, flags first. Python standard library. |
 | [`product-film`](skills/product-film) | Makes short promo, teaser and launch films of a software product from its real UI: one HTML page on one clock, rendered frame-exact to 60 fps with headless Chrome. Splices in clips and captioned GIFs, lands a generated track's drop on a picture cue, masters to −14 LUFS. |
 | [`timeline-video`](skills/timeline-video) | Writes and renders timeline-scripted AI videos: one take up to 30 seconds, scripted second by second (locked character, style, timed audio, timeline, camera rules, negatives). Checks the script, prices it, renders it on OpenRouter (Seedance 2.5 by default), and lays out a frame per beat to review. Python standard library. |
 | [`x-media-download`](skills/x-media-download) | Downloads the videos, GIFs and photos attached to public X (Twitter) posts: the best MP4, real `.gif`s on request, original-size photos, and a JSON record of where each file came from. No login, no API key, Python standard library only. |
