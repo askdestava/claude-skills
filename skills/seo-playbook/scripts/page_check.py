@@ -169,7 +169,7 @@ class Page(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.title, self.h1, self.metas, self.links_rel, self.anchors = '', [], [], [], []
         self.jsonld, self.images, self.lang, self.scripts = [], [], '', 0
-        self._stack, self._capture, self._buf, self._text = [], None, [], []
+        self._stack, self._capture, self._buf, self._text, self._noscript = [], None, [], [], []
         self._anchor = None
 
     def handle_starttag(self, tag, attrs):
@@ -225,9 +225,14 @@ class Page(HTMLParser):
             self._anchor['text'].append(data)
         if not SKIP_TEXT.intersection(self._stack):
             self._text.append(data)
+        elif 'noscript' in self._stack and not {'script', 'style'}.intersection(self._stack):
+            self._noscript.append(data)  # shown only when scripts are off: counted apart, never as the page's text
 
     def words(self):
         return len(' '.join(self._text).split())
+
+    def noscript_words(self):
+        return len(' '.join(self._noscript).split())
 
 
 def meta(page, **want):
@@ -342,9 +347,11 @@ def check(url, ua, crawlers):
     out['lang'] = page.lang
     out['hreflang'] = sum(1 for l in page.links_rel if l.get('hreflang'))
     out['words_in_html'] = page.words()
+    out['words_in_noscript'] = page.noscript_words()
     out['scripts'] = page.scripts
     if out['words_in_html'] < 50 and page.scripts:
-        issue('only %d words in the HTML before scripts run: the content may exist only after JavaScript' % out['words_in_html'])
+        issue('only %d words in the HTML before scripts run%s: the content may exist only after JavaScript'
+              % (out['words_in_html'], ' (and %d in a <noscript> block; compare it across pages, a shell repeats one)' % out['words_in_noscript'] if out['words_in_noscript'] else ''))
     host = urllib.parse.urlsplit(final).netloc.lower()
     internal, external = [], 0
     for a in page.anchors:
