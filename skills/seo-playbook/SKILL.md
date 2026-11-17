@@ -92,6 +92,10 @@ The index is below; each job's steps are in its tier file. Read only the tier fi
 | C | C1 Find timely topics · C2 Earn links through tools you use · C3 Claim relevant business listings · C4 Get customer reviews and independent coverage · C5 Reuse research across platforms · C6 Publish LinkedIn articles people can find · C7 Turn articles into carousels and short videos · C8 Give Claude a repeatable SEO job · C9 Track the actions that produce customers | `references/tier-c.md` |
 | D | D1 Improve search and sharing previews · D2 Add accurate structured data · D3 Remove page friction | `references/tier-d.md` |
 
+A second, shorter ranked list (24 moves, and the order one site shipped them) is in
+`references/second-list.md`, with its rules for reading Search Console and where it disagrees with
+this one. When the user asks what to do first on a site Google already shows, read it too.
+
 The job titles are the source post's own, and so are the bold words that open each step in the
 tier files. Use those words when you talk about a job: "parasite SEO" is parasite SEO, "exchange
 editorial links" is an exchange. Do not rename a tactic into something softer.
@@ -145,7 +149,7 @@ a page with a browser tool. Each prints its own `--help`.
 | Script | What it does |
 |---|---|
 | `gsc_read.js` | Reads the table of an open Search Console report out of the page: every row it holds (Search Console caps a tab at 1,000 per period), not the ten on screen. |
-| `gsc.py` | `summary`, `near` (rows at positions 8 to 20), `ctr` (page-one rows clicked less than their position earns on this site), `decay` (rows that lost clicks against a comparison period). Reads `gsc_read.js` output, the export zip, or its CSVs. |
+| `gsc.py` | `summary`, `near` (rows at positions 8 to 20), `ctr` (page-one rows clicked less than their position earns on this site), `decay` (rows that lost clicks against a comparison period), `questions` (queries that open with a question word), `pairs` (queries that compare two things). `--brand` drops and counts the rows naming the brand. Reads `gsc_read.js` output, the export zip, or its CSVs. |
 | `serp_read.js` | Reads an open Google results page: the organic results in order, the AI Overview and its links, questions, videos, forums, ads, related searches. |
 | `autocomplete.py` | Google's suggestions around a phrase: plain, a to z, question words, buying words. |
 | `answer_read.js` | Reads an AI assistant's finished answer and the outside links in it, on any assistant's page. |

@@ -16,12 +16,17 @@ Commands:
   ctr       page-one rows clicked less than their position earns here -> titles to rewrite
   decay     rows that lost clicks against the comparison period       -> pages to update
             (needs an export or read made with a comparison switched on)
+  questions queries that open with a question word, most impressions first -> headings to write as the
+            question, with a one-line answer under each
+  pairs     queries that compare ("vs", "or", "alternative", "compare", "difference") -> comparison pages
 
 Examples:
   gsc.py summary seo/gsc/2026-11-17/queries.json
   gsc.py near    export.zip --tab pages --min-impr 50
   gsc.py ctr     queries.json --exclude 'mybrand'
   gsc.py decay   export.zip --tab pages --contains '/blog/'
+  gsc.py questions queries.json --brand mybrand
+  gsc.py pairs   export.zip
 """
 import argparse
 import csv
@@ -218,7 +223,8 @@ def cmd_summary(args, recs, compared, source):
 
 def cmd_near(args, recs, compared, source):
     need_position()
-    hit = [r for r in recs if args.min_pos <= r['position'] <= args.max_pos and r['impressions'] >= args.min_impr]
+    hit = [r for r in recs if args.min_pos <= r['position'] <= args.max_pos and r['impressions'] >= args.min_impr
+           and len(r['key'].split()) >= args.min_words]
     hit.sort(key=lambda r: -r['impressions'])
     notes = ['%s of %s rows rank between %s and %s with at least %s impressions. Most impressions first.'
              % (fmt(len(hit)), fmt(len(recs)), fmt(args.min_pos, 1), fmt(args.max_pos, 1), fmt(args.min_impr))]
@@ -291,6 +297,47 @@ def cmd_decay(args, recs, compared, source):
          notes, hit)
 
 
+# English defaults, as the second source list gives them. Pass --words for another language.
+QUESTION_WORDS = 'how,what,why,when,can,is,does,should,which'
+PAIR_WORDS = 'vs,versus,or,alternative,alternatives,compare,comparison,difference'
+
+
+def cmd_questions(args, recs, compared, source):
+    words = {w.strip().lower() for w in (args.words or QUESTION_WORDS).split(',') if w.strip()}
+    pool = [r for r in recs if r['impressions'] >= args.min_impr]
+    rates = sorted(r['ctr'] for r in pool)
+    median = rates[len(rates) // 2] if rates else 0.0
+    hit = [r for r in pool if r['key'].lower().split(' ')[0] in words]
+    under = [r for r in hit if r['ctr'] < median] if median > 0 else hit
+    under.sort(key=lambda r: -r['impressions'])
+    notes = ['%s of %s rows with at least %s impressions open with a question word (%s).'
+             % (fmt(len(hit)), fmt(len(pool)), fmt(args.min_impr), ', '.join(sorted(words))),
+             ('The median click rate of those %s rows is %s%%; listed: the %s questions under it.' % (fmt(len(pool)), fmt(median, 2), fmt(len(under))))
+             if median > 0 else 'The median click rate is 0%, so every question is listed.',
+             'Which page a query lands on is not in this file: filter the report to the query and read the Pages tab.']
+    under = under[:args.limit]
+    emit(args, 'Questions people search', ['Query', 'Impressions', 'Clicks', 'Click rate', 'Position'],
+         [[r['key'], fmt(r['impressions']), fmt(r['clicks']), fmt(r['ctr'], 1) + '%', fmt(r['position'], 1) if HAS_POSITION else '-'] for r in under],
+         notes, under)
+
+
+def cmd_pairs(args, recs, compared, source):
+    words = [w.strip().lower() for w in (args.words or PAIR_WORDS).split(',') if w.strip()]
+    rx = re.compile(r'(?:^|\s)(%s)(?:\s|$)' % '|'.join(re.escape(w) for w in words), re.I)
+    hit = []
+    for r in recs:
+        m = rx.search(r['key'])
+        if m and r['impressions'] >= args.min_impr:
+            hit.append(dict(r, word=m.group(1).lower()))
+    hit.sort(key=lambda r: -r['impressions'])
+    notes = ['%s of %s rows compare two things, by one of: %s. Most impressions first.' % (fmt(len(hit)), fmt(len(recs)), ', '.join(words)),
+             'Grouping them into pairs is a reading, not a count: "x or y" is a pair only when x and y are both things one can choose.']
+    hit = hit[:args.limit]
+    emit(args, 'Comparison searches', ['Query', 'Word', 'Impressions', 'Clicks', 'Position'],
+         [[r['key'], r['word'], fmt(r['impressions']), fmt(r['clicks']), fmt(r['position'], 1) if HAS_POSITION else '-'] for r in hit],
+         notes, hit)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest='cmd')
@@ -300,6 +347,7 @@ def main():
         p.add_argument('--tab', default='queries', help='which CSV of a zip or folder: queries, pages, countries, devices, dates (default queries)')
         p.add_argument('--contains', help='keep rows whose first column matches this regular expression')
         p.add_argument('--exclude', help='drop rows whose first column matches this regular expression (your brand name, for one)')
+        p.add_argument('--brand', help='your brand name: rows naming it are dropped and counted, with their share of impressions')
         p.add_argument('--limit', type=int, default=40, help='rows to print (default 40)')
         p.add_argument('--json', action='store_true', help='print JSON instead of a Markdown table')
 
@@ -307,6 +355,7 @@ def main():
     common(p)
     p = sub.add_parser('near', help='rows just off page one')
     common(p)
+    p.add_argument('--min-words', type=int, default=1, help='skip rows with fewer words than this (2 drops one-word queries)')
     p.add_argument('--min-pos', type=float, default=8.0)
     p.add_argument('--max-pos', type=float, default=20.0)
     p.add_argument('--min-impr', type=float, default=20)
@@ -321,6 +370,15 @@ def main():
     p.add_argument('--min-lost', type=float, default=1)
     p.add_argument('--min-clicks', type=float, default=3, help='clicks the row needed in the earlier period')
 
+    p = sub.add_parser('questions', help='queries that open with a question word')
+    common(p)
+    p.add_argument('--min-impr', type=float, default=20)
+    p.add_argument('--words', help='the question words, comma separated (default: %s)' % QUESTION_WORDS)
+    p = sub.add_parser('pairs', help='queries that compare two things')
+    common(p)
+    p.add_argument('--min-impr', type=float, default=1)
+    p.add_argument('--words', help='the comparing words, comma separated (default: %s)' % PAIR_WORDS)
+
     args = ap.parse_args()
     if not args.cmd:
         ap.print_help()
@@ -333,7 +391,17 @@ def main():
     if args.exclude:
         rx = re.compile(args.exclude, re.I)
         recs = [r for r in recs if not rx.search(r['key'])]
-    {'summary': cmd_summary, 'near': cmd_near, 'ctr': cmd_ctr, 'decay': cmd_decay}[args.cmd](args, recs, compared, source)
+    if args.brand:
+        named = [r for r in recs if args.brand.lower() in r['key'].lower()]
+        total = sum(r['impressions'] for r in recs)
+        share = 100.0 * sum(r['impressions'] for r in named) / total if total else 0.0
+        recs = [r for r in recs if args.brand.lower() not in r['key'].lower()]
+        if not args.json:
+            print('Dropped %s rows naming "%s": %s%% of the impressions in this file.%s\n'
+                  % (fmt(len(named)), args.brand, fmt(share, 1),
+                     ' That is over a fifth: most of what this file shows is people who already know the name. Say so before ranking anything.' if share > 20 else ''))
+    {'summary': cmd_summary, 'near': cmd_near, 'ctr': cmd_ctr, 'decay': cmd_decay,
+     'questions': cmd_questions, 'pairs': cmd_pairs}[args.cmd](args, recs, compared, source)
     return 0
 
 

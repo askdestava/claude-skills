@@ -43,6 +43,10 @@ Exchanging editorial links, programmatic pages and parasite SEO are in it becaus
 job also quotes what Google's spam policy calls the version it penalises, so you can do the work
 knowing where that is. Fake reviews and posing as a customer are not offered.
 
+A second ranked list is carried beside it: [@noelcetaseo's 24 moves](https://x.com/noelcetaseo/status/2122702185792237736)
+(17 November 2026), with the order that site shipped them and its rules for reading Search Console
+(`references/second-list.md`). The two disagree on parasite SEO and llms.txt; the skill shows both.
+
 The jobs and their order follow a ranked list by [@borjafat](https://x.com/borjafat/status/2122336732079161572)
 (16 November 2026), which recommends running it with a commercial SEO connector. Its headline
 counts 232 tactics: the post holds 197 one-line tactics under 35 headings (197 + 35 = 232). Here
@@ -84,6 +88,8 @@ python3 scripts/gsc.py summary export.zip
 python3 scripts/gsc.py near    export.zip --tab pages          # positions 8-20, most impressions first
 python3 scripts/gsc.py ctr     export.zip --exclude mybrand    # page-one rows clicked less than their position earns here
 python3 scripts/gsc.py decay   export.zip --tab pages          # needs an export made with Compare on
+python3 scripts/gsc.py questions export.zip --brand mybrand    # searches that open with how, what, why...
+python3 scripts/gsc.py pairs   export.zip                      # searches that compare: vs, or, alternative
 
 # What a crawler gets
 python3 scripts/page_check.py https://example.com/ https://example.com/pricing
