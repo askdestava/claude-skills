@@ -62,7 +62,12 @@ So is posting as a customer, and seeding questions to answer them.
 instead, and which pages they lean on. Then change the evidence they read.
 
 **Needs.** `seo/questions.md`; `data-sources.md`, "AI answers" (how to ask each assistant and what
-to watch for).
+to watch for) and "Google's own count of AI appearances".
+
+**Start from the one first-party number.** Read Search Console's Generative AI features report by
+page and by day and save it with the baseline: how often Google's AI features showed the site, and
+which pages. It covers Google only and has no queries, so it tells you where you stand and which
+pages already get drawn on; the steps below tell you why, and cover the other assistants.
 
 1. **Save the buying questions**: ten to thirty real ones, worded as a buyer would, without the
    brand's name. They do not change between runs.

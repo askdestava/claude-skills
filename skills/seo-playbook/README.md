@@ -1,7 +1,8 @@
 # seo-playbook
 
 An agent skill (Claude Code, and any agent that reads `SKILL.md` skills) that works a website's
-visibility in search and in AI answers, one job at a time, from a ranked playbook of 35 jobs.
+visibility in search and in AI answers, one job at a time, from a ranked playbook of 35 jobs and
+the 197 steps inside them.
 
 It needs **no SEO connector, account or API key**. Where a paid connector would hand the agent
 Search Console numbers, rankings and "AI visibility" figures, this skill has the agent read the
@@ -15,6 +16,8 @@ same things in your own browser, and gives it small scripts for the counting:
 - **What people type**: Google's own suggestions around a phrase.
 - **AI assistants' answers** to your buyers' questions: which brands each one names, which pages it
   cites, the questions that name your competitors and not you, and what changed since the last run.
+  Plus Search Console's Generative AI features report: Google's own count of how often its AI
+  features showed your pages, and which ones.
 - **What a crawler is handed** at each address: redirects, robots.txt per crawler (search engines
   and AI crawlers), noindex, canonical, title and heading, preview tags, structured data, and how
   much text exists before JavaScript runs.
@@ -39,8 +42,10 @@ Four of them sit close to what search engines call spam (link exchanges, pages m
 publishing on other platforms, reviews); each says where the line is and stays on the right side.
 
 The jobs and their order follow a ranked list by [@borjafat](https://x.com/borjafat/status/2122336732079161572)
-(16 November 2026), which recommends running it with a commercial SEO connector. This skill is
-that list turned into procedures an agent can run without one. The order is a default: what your
+(16 November 2026), which recommends running it with a commercial SEO connector. Its headline
+counts 232 tactics: the post holds 197 one-line tactics under 35 headings (197 + 35 = 232). Here
+each heading is a job and each of the 197 tactics is a numbered step of its job. This skill is
+that list turned into procedures an agent can run without the connector. The order is a default: what your
 own data shows comes first.
 
 ## Install

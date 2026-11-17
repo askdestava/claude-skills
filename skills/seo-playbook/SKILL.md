@@ -5,8 +5,9 @@ description: Work a website's search and AI-answer visibility one job at a time,
 
 # seo-playbook
 
-A site is worked one job at a time. The playbook is 35 jobs in five tiers, S (do first) to D (do last).
-Pick one, work every step of it, leave the result checkable, log it. Then pick the next.
+A site is worked one job at a time. The playbook is 35 jobs in five tiers, S (do first) to D (do
+last), holding 197 steps between them. Pick one job, work every step of it, leave the result
+checkable, log it. Then pick the next.
 
 There is no connector to install. What a paid SEO connector sells is reached this way instead:
 
@@ -15,7 +16,7 @@ There is no connector to install. What a paid SEO connector sells is reached thi
 | Search Console numbers | The user's signed-in browser: open the report, read its table out of the page (`scripts/gsc_read.js`), or take the export. `scripts/gsc.py` does the arithmetic. |
 | What ranks, and in what format | The live results page, read with `scripts/serp_read.js`. |
 | What people type | Google's own suggestions (`scripts/autocomplete.py`) and the Search Console queries the site already shows for. |
-| What AI assistants recommend, and who they cite | Ask them in the browser, read the answer (`scripts/answer_read.js`), log it (`scripts/ai_answers.py`). |
+| What AI assistants recommend, and who they cite | Ask them in the browser, read the answer (`scripts/answer_read.js`), log it (`scripts/ai_answers.py`). For Google's own surfaces, Search Console's Generative AI features report counts the impressions. |
 | Is a page readable by crawlers | `scripts/page_check.py` (what the server sends) plus the browser (what appears after scripts run). |
 | Who links to whom inside the site | `scripts/links.py`. |
 | Writing and publishing | You, in the place the site's pages live (its repository or CMS), shipped the way the user ships. |
@@ -161,6 +162,8 @@ to weeks to settle).
 ## Where the playbook comes from
 
 The 35 jobs and their order follow a ranked list published by [@borjafat](https://x.com/borjafat/status/2122336732079161572)
-(November 2026). The steps are rewritten here as procedures with inputs, outputs and a check; the
-connector-free data layer, the scripts, the workspace and the rules are this skill's. The order is
+(16 November 2026). Its headline says 232 tactics; the post holds 197 one-line tactics under 35
+headings (197 + 35 = 232). Each heading is a job here and each of the 197 tactics is one numbered
+step of its job, rewritten as a procedure with inputs, outputs and a check. The connector-free data
+layer, the scripts, the workspace and the rules are this skill's. The order is
 one practitioner's judgement, a sensible default and not a law: evidence from the site outranks it.

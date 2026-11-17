@@ -8,6 +8,7 @@ Input, any of:
   a .json saved by gsc_read.js      (the report's table, read out of the open page)
   the .zip from Export > Download CSV   (pick a tab with --tab; default queries)
   one .csv from that zip, or the folder holding them
+The generative AI features report counts impressions only: summary reads it, the rest need clicks.
 
 Commands:
   summary   what the file holds: rows, totals, position bands, the top rows
@@ -38,9 +39,16 @@ TABS = {
 
 
 HAS_POSITION = True
+HAS_CLICKS = True
+
+
+def need_clicks():
+    if not HAS_CLICKS:
+        sys.exit('This file counts impressions only (the generative AI features report does): no position, click rate or lost clicks to work out. Use summary.')
 
 
 def need_position():
+    need_clicks()
     if not HAS_POSITION:
         sys.exit('This file has no Position column. In the report, switch on the "Average position" tile above the chart, then read or export again.')
 
@@ -74,11 +82,12 @@ def to_records(columns, rows):
         m = metric_of(col)
         if m:
             where.setdefault(m, []).append(i)
-    if 'clicks' not in where or 'impressions' not in where:
-        sys.exit('This file has no Clicks and Impressions columns. Columns found: %s' % ', '.join(columns))
-    compared = len(where['clicks']) > 1
-    global HAS_POSITION
+    if 'impressions' not in where:
+        sys.exit('This file has no Impressions column. Columns found: %s' % ', '.join(columns))
+    compared = len(where['impressions']) > 1
+    global HAS_POSITION, HAS_CLICKS
     HAS_POSITION = 'position' in where
+    HAS_CLICKS = 'clicks' in where  # the generative AI features report counts impressions only
     out = []
     for r in rows:
         if not r or len(r) < len(columns):
@@ -89,6 +98,7 @@ def to_records(columns, rows):
             if compared and len(idxs) > 1:
                 rec['prev_' + m] = num(r[idxs[1]])
         rec.setdefault('position', 0.0)
+        rec.setdefault('clicks', 0.0)
         # Click rate from the counts, not from the rounded column.
         rec['ctr'] = 100.0 * rec['clicks'] / rec['impressions'] if rec['impressions'] else 0.0
         if compared:
@@ -171,16 +181,22 @@ def cmd_summary(args, recs, compared, source):
     for name, lo, hi in bands:
         inb = [r for r in recs if r['impressions'] and lo <= r['position'] < hi]
         band_rows.append([name, fmt(len(inb)), fmt(sum(r['clicks'] for r in inb)), fmt(sum(r['impressions'] for r in inb))])
+    if HAS_CLICKS and HAS_POSITION:
+        totals = ('Rows add up to %s clicks and %s impressions, click rate %s%%, position %s (weighted by impressions).'
+                  % (fmt(clicks), fmt(impr), fmt(100.0 * clicks / impr if impr else 0, 2), fmt(pos, 1)))
+    elif HAS_CLICKS:
+        totals = 'Rows add up to %s clicks and %s impressions, click rate %s%%.' % (fmt(clicks), fmt(impr), fmt(100.0 * clicks / impr if impr else 0, 2))
+    else:
+        totals = 'Rows add up to %s impressions. This table counts impressions only.' % fmt(impr)
     notes = [
         'Source: %s. Rows: %s. Comparison period in the file: %s.' % (source, fmt(len(recs)), 'yes' if compared else 'no'),
-        'Rows add up to %s clicks and %s impressions, click rate %s%%, position %s (weighted by impressions).'
-        % (fmt(clicks), fmt(impr), fmt(100.0 * clicks / impr if impr else 0, 2), fmt(pos, 1)),
+        totals,
         'Search Console leaves rare queries out of the table and stops at 1,000 rows, so rows add up to less than the report\'s totals.',
     ]
     if compared:
         pc = sum(r.get('prev_clicks', 0) for r in recs)
         pi = sum(r.get('prev_impressions', 0) for r in recs)
-        notes.append('Comparison period: %s clicks, %s impressions.' % (fmt(pc), fmt(pi)))
+        notes.append('Comparison period: %s%s impressions.' % ('%s clicks, ' % fmt(pc) if HAS_CLICKS else '', fmt(pi)))
     if args.json:
         json.dump({'source': source, 'rows': len(recs), 'compared': compared, 'clicks': clicks, 'impressions': impr,
                    'position': round(pos, 2), 'bands': band_rows}, sys.stdout, indent=1)
@@ -189,11 +205,15 @@ def cmd_summary(args, recs, compared, source):
     print('## Summary')
     for n in notes:
         print(n)
-    print('\n### By position\n' + table(['Position', 'Rows', 'Clicks', 'Impressions'], band_rows))
+    if HAS_POSITION:
+        print('\n### By position\n' + table(['Position', 'Rows', 'Clicks', 'Impressions'], band_rows))
     top = sorted(recs, key=lambda r: (-r['clicks'], -r['impressions']))[:args.limit if args.limit < 15 else 15]
+    if not HAS_CLICKS:
+        print('\n### Top rows by impressions\n' + table(['Row', 'Impressions'], [[r['key'], fmt(r['impressions'])] for r in top]))
+        return
     print('\n### Top rows by clicks\n' + table(
         ['Row', 'Clicks', 'Impressions', 'Click rate', 'Position'],
-        [[r['key'], fmt(r['clicks']), fmt(r['impressions']), fmt(r['ctr'], 1) + '%', fmt(r['position'], 1)] for r in top]))
+        [[r['key'], fmt(r['clicks']), fmt(r['impressions']), fmt(r['ctr'], 1) + '%', fmt(r['position'], 1) if HAS_POSITION else '-'] for r in top]))
 
 
 def cmd_near(args, recs, compared, source):
@@ -210,6 +230,7 @@ def cmd_near(args, recs, compared, source):
 
 def cmd_ctr(args, recs, compared, source):
     need_position()
+    need_clicks()
     # What a position earns on THIS site: clicks over impressions of every row at that rounded position.
     buckets = {}
     for r in recs:
@@ -239,6 +260,7 @@ def cmd_ctr(args, recs, compared, source):
 
 
 def cmd_decay(args, recs, compared, source):
+    need_clicks()
     if not compared:
         sys.exit('This file has one period only. Read or export the report with a comparison on '
                  '(add compare_date=PREV to the report\'s address, or pick Compare in the date filter).')

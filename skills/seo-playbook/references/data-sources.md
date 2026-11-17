@@ -99,6 +99,27 @@ clicks); the most recent days are incomplete.
 - *Do two pages compete for one query?* `query=*<the words>` with `breakdown=page`. More than one
   address taking impressions for the same search is a pair to compare (S5).
 
+### Google's own count of AI appearances
+
+Search Console has a second performance report, **Generative AI features** (marked Beta), under
+Performance, Search results:
+
+```
+https://search.google.com/search-console/performance/search-analytics/ai?resource_id=sc-domain%3Aexample.com&num_of_days=28&breakdown=page
+```
+
+It counts how often the site's pages were shown inside Google's generative AI features. One
+metric, impressions: no clicks, no position, and no queries tab (the tabs are Pages, Countries,
+Devices, Days). `breakdown=page` and `breakdown=date` work as above, and so does `num_of_days`.
+With a comparison on, the tiles show both periods but the Days table is left out ("Table omitted"),
+so read days without one. `gsc_read.js` reads it; `gsc.py summary` takes the file (the other
+commands need clicks) and `--contains` narrows it to a section of the site.
+
+This is the only first-party number for AI visibility, and it is Google's surfaces only: it says
+nothing about ChatGPT, Perplexity or Claude. Read it first in job B3, save it with the baseline,
+and treat the pages at the top as the ones Google's AI already draws on. When a headline quotes
+"AI mentions" over a Search Console chart, this report's impressions are what it is counting.
+
 ### Is this address indexed? (URL inspection)
 
 There is no address for it: `.../inspect?id=` takes an id Search Console makes, not the page's URL

@@ -10,8 +10,8 @@
 // in the workspace), on a tab that shows a Search Console report. gsc.py reads the saved file.
 //
 // Checked on 2026-11-17 on: Performance (queries, pages and days tabs, with and without a
-// comparison). It reads any Search Console page that shows a table (Links, Page indexing) the
-// same way. Returns { error } instead of throwing.
+// comparison) and the generative AI features report (pages and days). It reads any Search Console
+// page that shows a table (Links, Page indexing) the same way. Returns { error } instead of throwing.
 async () => {
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const text = (el) => (el ? el.innerText.replace(/\s+/g, ' ').trim() : '');
