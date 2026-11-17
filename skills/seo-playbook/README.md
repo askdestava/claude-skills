@@ -31,21 +31,25 @@ way you ship. Nothing is published, sent, posted or submitted without your yes.
 
 | Tier | Jobs |
 |---|---|
-| **S** | Keywords that bring customers · the pages buyers need · topic coverage · something the other results lack · improve what exists · internal links |
-| **A** | The lists buyers read · recover links already earned · links competitors earned · replace dead resources · statistics people cite · journalists' requests · the visual an article lacks · a video for someone's article · free tools · editorial links between partners |
-| **B** | Pages from a template · publish where the results already are · gaps in AI recommendations · YouTube answers · local search · who is behind the content · pages search engines can reach |
-| **C** | Timely topics · vendors whose tools you use · business listings · reviews and independent coverage · reuse research elsewhere · LinkedIn articles · carousels and short videos · make the job repeatable · track what brings customers |
-| **D** | Search and sharing previews · structured data · page friction |
+| **S** | Find keywords that bring customers · Build the pages buyers need · Build topical authority · Add information gain · Improve content you already have · Add internal links people will use |
+| **A** | Get into the lists buyers read · Recover links you already earned · Find link opportunities through competitors · Replace broken and outdated resources · Publish statistics people can cite · Answer journalist requests · Build the visual an article is missing · Turn another author's article into a video · Build free tools that earn links · Exchange relevant editorial links |
+| **B** | Build useful programmatic pages · Use parasite SEO · Find gaps in AI recommendations · Publish YouTube answers buyers search for · Improve local search visibility · Show who is behind the content · Make important pages accessible |
+| **C** | Find timely topics · Earn links through tools you use · Claim relevant business listings · Get customer reviews and independent coverage · Reuse research across platforms · Publish LinkedIn articles people can find · Turn articles into carousels and short videos · Give Claude a repeatable SEO job · Track the actions that produce customers |
+| **D** | Improve search and sharing previews · Add accurate structured data · Remove page friction |
 
 Each job is a procedure: what it needs, numbered steps, what it leaves behind, and when it is done.
-Four of them sit close to what search engines call spam (link exchanges, pages made in bulk,
-publishing on other platforms, reviews); each says where the line is and stays on the right side.
+The job titles are the source post's own words, and so are the words that open each step.
+Exchanging editorial links, programmatic pages and parasite SEO are in it because they work; each
+job also quotes what Google's spam policy calls the version it penalises, so you can do the work
+knowing where that is. Fake reviews and posing as a customer are not offered.
 
 The jobs and their order follow a ranked list by [@borjafat](https://x.com/borjafat/status/2122336732079161572)
 (16 November 2026), which recommends running it with a commercial SEO connector. Its headline
 counts 232 tactics: the post holds 197 one-line tactics under 35 headings (197 + 35 = 232). Here
-each heading is a job and each of the 197 tactics is a numbered step of its job. This skill is
-that list turned into procedures an agent can run without the connector. The order is a default: what your
+each heading is a job under the post's own title, and each of the 197 tactics is a numbered step
+that opens with the post's own words for what to do. What follows each (how to do it without the
+connector, the outputs, the check), the scripts and the rest are ours and are what the MIT licence
+covers; the titles and tactic wording are @borjafat's, quoted with credit. The order is a default: what your
 own data shows comes first.
 
 ## Install
