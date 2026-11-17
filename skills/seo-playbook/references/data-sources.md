@@ -140,6 +140,13 @@ There is no address for it: `.../inspect?id=` takes an id Search Console makes, 
   addresses and not fetched them yet. In large numbers that is about how much of the site Google
   chooses to crawl (how many addresses there are, how well linked, how useful the fetched ones
   proved), not about a block.
+  To see the addresses behind a reason, open its row: the rows are not links, but a click on one
+  (a script `.click()` is enough here) goes to `.../index/drilldown?resource_id=...&item_key=<key>`,
+  a table of up to 1,000 example addresses with the day each was last crawled, which `gsc_read.js`
+  reads. Group those by section of the site: which kind of page Google is declining says more than
+  the count.
+- `https://search.google.com/search-console/sitemaps?resource_id=...` — Sitemaps: each submitted
+  sitemap, when Google last read it, and how many pages it found there (`gsc_read.js` reads it).
 - `https://search.google.com/search-console/links?resource_id=...` — Links: external links (top
   linked pages, top linking sites, top linking text) and internal links. Each list's MORE opens
   `.../links/drilldown?resource_id=...&type=EXTERNAL` (also `DOMAIN`, `ANCHOR_TEXT`, `INTERNAL`),
